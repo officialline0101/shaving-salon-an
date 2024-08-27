@@ -338,12 +338,17 @@ function selectirradiations(element) {
             element.classList.add('active');
         }
 
-        function showMenu(menu) {
-            document.querySelectorAll('.menu-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(menu).classList.add('active');
-        }
+function showMenu(menu) {
+    // すべてのメニューセクションを非表示にして選択状態をリセット
+    document.querySelectorAll('.menu-section').forEach(section => {
+        section.classList.remove('active');
+        // オプションとコースの選択をリセット
+        section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+    });
+
+    // 選択されたメニューセクションを表示
+    document.getElementById(menu).classList.add('active');
+}
 
         function selectSymptom(button) {
             const buttons = document.querySelectorAll('.symptoms button');
