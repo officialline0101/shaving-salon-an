@@ -333,9 +333,10 @@ function selectirradiations(element) {
 }
 
         function selectVisit(element) {
-            const buttons = document.querySelectorAll('.visit-buttons button');
-            buttons.forEach(btn => btn.classList.remove('active'));
+            document.getElementById('firstVisit').classList.remove('active');
+            document.getElementById('repeatVisit').classList.remove('active');
             element.classList.add('active');
+            visitCount = element.innerText;
         }
 
 function showMenu(menu) {
