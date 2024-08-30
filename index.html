@@ -351,13 +351,11 @@ function showMenu(menu) {
     document.getElementById(menu).classList.add('active');
 }
 
-function selectSymptom(button) {
-    const buttons = document.querySelectorAll('.symptoms button');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
-    
-    // 症状が複数選択される可能性を考慮
-    selectedSymptom = Array.from(buttons).filter(btn => btn.classList.contains('active')).map(btn => btn.textContent).join(', ');
+        function selectSymptom(button) {
+            const buttons = document.querySelectorAll('.symptoms button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            selectedSymptom = button.textContent;
 
     const repairLabel = document.getElementById('repairLabel');
     const repairButtons = document.getElementById('repairButtons');
