@@ -302,7 +302,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
         let visitCount = '';
-        let selectedSymptom = '';
+        let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
         let availabilityCache = {};
@@ -351,27 +351,23 @@ function showMenu(menu) {
     document.getElementById(menu).classList.add('active');
 }
 
-    function selectSymptom(button) {
-        const buttons = document.querySelectorAll('.symptoms button');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-        selectedSymptom = button.textContent;
+        function selectSymptom(button) {
+            const buttons = document.querySelectorAll('.symptoms button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            selectedSymptom = button.textContent;
 
-        // 変更点: 複数の症状をカンマで区切って連結する処理
-        const selectedButtons = document.querySelectorAll('.symptoms button.active');
-        selectedSymptom = Array.from(selectedButtons).map(btn => btn.textContent).join(', ');
+    const repairLabel = document.getElementById('repairLabel');
+    const repairButtons = document.getElementById('repairButtons');
 
-        const repairLabel = document.getElementById('repairLabel');
-        const repairButtons = document.getElementById('repairButtons');
-
-        if (selectedSymptom === '1回目' || selectedSymptom === '2回目以降') {
-            repairLabel.style.display = 'block';
-            repairButtons.style.display = 'flex';
-        } else {
-            repairLabel.style.display = 'none';
-            repairButtons.style.display = 'none';
-        }
+    if (selectedSymptom === '1回目' || selectedSymptom === '2回目以降') {
+        repairLabel.style.display = 'block';
+        repairButtons.style.display = 'flex';
+    } else {
+        repairLabel.style.display = 'none';
+        repairButtons.style.display = 'none';
     }
+}
         
 function selectDate(cell) {
     // "unavailable" クラスが付いている場合はクリックを無効化
@@ -403,7 +399,7 @@ function selectDate(cell) {
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
                 visitCount: visitCount,
-                selectedSymptom: selectedSymptom,
+                selectedSymptom: selectedSymptom.join(', '), 
                 irradiationsCount: irradiationsCount,
                 dates: [selectedFullDate],
                 message: document.getElementById('message').value
