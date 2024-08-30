@@ -411,6 +411,10 @@ if (!formData.name || !formData.phone) {
     return;
 }
 
+    // selectedSymptomとirradiationsCountをカンマで結合
+    const symptomsText = formData.selectedSymptom ? formData.selectedSymptom.split(',').join(', ') : '';
+    const fullSymptomText = symptomsText + (formData.irradiationsCount ? ', ' + formData.irradiationsCount : '');
+
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
