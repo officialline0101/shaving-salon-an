@@ -609,6 +609,8 @@ for (let i = 0; i < 7; i++) {
         const slotEnd = new Date(slotStart);
         slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
+        const now = new Date();
+
         const isBusinessDay = businessDays.some(businessDay => {
             const businessDayStart = new Date(businessDay.start);
             const businessDayEnd = new Date(businessDay.end);
@@ -629,6 +631,13 @@ for (let i = 0; i < 7; i++) {
             return acc;
         }, 0);
 
+// リアルタイムで過ぎた時間のセルを×にする条件
+if (slotStart < now) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    cell.setAttribute('data-date', slotStart.toISOString());
+    continue;
+}
         // 営業日のイベント時間内に他のイベントがある場合
         if (isBusinessEventTime && count > 0) {
             cell.textContent = '✕';
