@@ -296,6 +296,9 @@
         <div class="label">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
+        <div class="label">ご予約内容</div>
+        <div id="displayInfo"></div> <!-- ここに選択された情報を表示します -->
+
         <button class="submit-button" onclick="submitForm()">予約を行う</button>
     </div>
 
@@ -320,16 +323,59 @@
             fetchAvailability(currentDate);
         });
 
-function selectirradiations(element) {
-    // クリックされたボタンの選択状態を切り替える
-    element.classList.toggle('active');
-    
-    // 選択されたボタンのテキストを取得する
+function updateDisplayInfo() {
+    const name = document.getElementById('name').value;
+    const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
+    const selectedSymptomText = selectedSymptom.length > 0 ? `・<span style="color:red;"><strong>メニュー</strong></span>：${selectedSymptom.join(', ')}` : '・メニューが未選択です'; // メニューを複数選択可能に
+    const irradiationsText = irradiationsCount ? `・<span style="color:red;"><strong>オプション</strong></span>：${irradiationsCount}` : '・オプション無し';
+    const selectedDateText = selectedFullDate ? `・<span style="color:red;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です'; // 日付が未選択の場合のメッセージを追加
+
+    // displayInfo要素に情報を表示
+    document.getElementById('displayInfo').innerHTML = `
+        <p>・<span style="color:red;"><strong>お名前</strong></span>：${name}</p>
+        <hr>
+        <p>${visitCountText}</p>
+        <hr>
+        <p>${selectedSymptomText}</p>
+        <hr>
+        <p>${irradiationsText}</p>
+        <hr>
+        <p>${selectedDateText}</p>
+        <hr>
+    `;
+}
+
+// 各ボタンや入力フィールドでupdateDisplayInfoを呼び出すようにする
+        document.getElementById('name').addEventListener('input', updateDisplayInfo);
+        document.querySelectorAll('.visit-buttons button').forEach(button => {
+            button.addEventListener('click', updateDisplayInfo);
+        });
+        document.querySelectorAll('.symptoms button').forEach(button => {
+            button.addEventListener('click', updateDisplayInfo);
+        });
+        document.querySelectorAll('.irradiations button').forEach(button => {
+            button.addEventListener('click', updateDisplayInfo);
+        });
+
+// 日付セルのクリックイベントで希望日時を更新
+document.querySelectorAll('.calendar td').forEach(cell => {
+    cell.addEventListener('click', () => {
+        selectDate(cell);
+        updateDisplayInfo();  // 日付を選択したら即座に表示を更新
+    });
+});
+
+function selectirradiations(button) {
+    // ボタンの選択状態を切り替える
+    button.classList.toggle('active');
+
+    // 選択されたオプションを取得
     const selectedButtons = document.querySelectorAll('.irradiations button.active');
-    const selectedIrradiations = Array.from(selectedButtons).map(button => button.innerText);
-    
-    // 選択された症状を変数に格納
+    const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
     irradiationsCount = selectedIrradiations.join(', ');
+
+    // 表示を更新
+    updateDisplayInfo();
 }
 
         function selectVisit(element) {
@@ -339,60 +385,80 @@ function selectirradiations(element) {
             visitCount = element.innerText;
         }
 
-function showMenu(menu) {
-    // すべてのメニューセクションを非表示にして選択状態をリセット
-    document.querySelectorAll('.menu-section').forEach(section => {
-        section.classList.remove('active');
-        // オプションとコースの選択をリセット
-        section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-    });
+    function showMenu(menu) {
+        // すべてのメニューボタンの選択状態をリセット
+        document.querySelectorAll('.menu-sections button').forEach(button => {
+            button.classList.remove('active');
+        });
 
-    // 選択されたメニューセクションを表示
-    document.getElementById(menu).classList.add('active');
-}
+        // 選択されたメニューセクションを表示
+        document.querySelectorAll('.menu-section').forEach(section => {
+            section.classList.remove('active');
+            section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+        });
 
-        function selectSymptom(button) {
-            const buttons = document.querySelectorAll('.symptoms button');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            selectedSymptom = button.textContent;
+        // 対応するメニューボタンを選択状態にする
+        document.querySelectorAll('.menu-sections button').forEach(button => {
+            if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
+                button.classList.add('active');
+            }
+        });
 
-    const repairLabel = document.getElementById('repairLabel');
-    const repairButtons = document.getElementById('repairButtons');
+        // 選択されたメニューセクションを表示
+        document.getElementById(menu).classList.add('active');
 
-    if (selectedSymptom === '1回目' || selectedSymptom === '2回目以降') {
-        repairLabel.style.display = 'block';
-        repairButtons.style.display = 'flex';
-    } else {
-        repairLabel.style.display = 'none';
-        repairButtons.style.display = 'none';
+    // メニューとオプションをリセット
+    selectedSymptom = '';      // メニューのリセット
+    irradiationsCount = '';    // オプションのリセット
+    menuPrice = 0;             // メニューの価格リセット
+    optionsPrice = 0;          // オプションの価格リセット
+
+        // 表示を更新
+        updateDisplayInfo();
     }
+
+function selectSymptom(button) {
+    // 全ボタンの選択をリセット
+    const buttons = document.querySelectorAll('.symptoms button');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    
+    // クリックされたボタンを選択状態に
+    button.classList.add('active');
+
+    // 選択されたメニューの名前と価格を取得
+    const symptomName = button.textContent;  // ボタンのテキストを取得
+    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
+    menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
+
+    // 表示を更新
+    updateDisplayInfo();
 }
         
-function selectDate(cell) {
-    // "unavailable" クラスが付いている場合はクリックを無効化
-    if (cell.classList.contains('unavailable')) {
-        return; // 何もせずに終了
+    function selectDate(cell) {
+        // "unavailable" クラスが付いている場合はクリックを無効化
+        if (cell.classList.contains('unavailable')) {
+            return; // 何もせずに終了
+        }
+
+        // 既に選択されているセルの選択を解除
+        const cells = document.querySelectorAll('.calendar td');
+        cells.forEach(td => td.classList.remove('selected'));
+
+        // 新しいセルを選択状態にする
+        cell.classList.add('selected');
+
+        // 選択された日付と時間を取得
+        const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
+        const selectedTime = cell.parentElement.firstChild.textContent; // 時間
+        const date = new Date(selectedDay);
+
+        // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
+        selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
+
+        // 希望日時を即座に更新
+        updateDisplayInfo();
     }
-
-    // 既に選択されているセルの選択を解除
-    const cells = document.querySelectorAll('.calendar td');
-    cells.forEach(td => td.classList.remove('selected'));
-
-    // 新しいセルを選択状態にする
-    cell.classList.add('selected');
-
-    // 選択された日付と時間を取得
-    const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
-    const selectedTime = cell.parentElement.firstChild.textContent; // 時間
-    const date = new Date(selectedDay);
-
-    // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
-    selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
-
-    // 変換後の日付を第1希望日の入力フィールドに設定
-    document.getElementById('date1').value = selectedFullDate;
-}
 
         function submitForm() {
             const formData = {
@@ -406,10 +472,11 @@ function selectDate(cell) {
             };
 
 // フォームデータのチェック
-if (!formData.name || !formData.phone) {
-    alert('お名前・電話番号ご記入ください。');
+if (!formData.name || !formData.phone || !formData.selectedSymptom) {
+    alert('お名前・電話番号・メニューすべてご記入ください');
     return;
 }
+
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
@@ -645,8 +712,8 @@ for (let i = 0; i < 7; i++) {
 
     // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
     for (let i = 0; i < 7; i++) {
-        const twentyOClockRow = times.indexOf('18:00');
-        const twentyOneOClockRow = times.indexOf('18:30');
+        const twentyOClockRow = times.indexOf('17:45');
+        const twentyOneOClockRow = times.indexOf('18:00');
 
         for (let j = twentyOClockRow; j < times.length; j++) {
             const cell = table.rows[j].cells[i + 1];
