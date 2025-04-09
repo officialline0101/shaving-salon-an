@@ -356,6 +356,35 @@
             }
         }
 
+        .info-textop {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #000000;
+    line-height: 1.5;
+    text-align: center;
+    word-wrap: break-word;
+    background-color: #eef9f5;
+    padding: 10px;
+    border-radius: 4px;
+
+    width: 100vw;              /* ビューポート横幅いっぱいに */
+    position: relative;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50%); /* 中央に配置 */
+    box-sizing: border-box;     /* padding を含めて幅を計算 */
+}
+
+/* 携帯端末向けのレスポンシブデザイン */
+@media (max-width: 768px) {
+    .info-textop {
+        font-size: 11.5px;
+        margin-top: 10px;
+        line-height: 2.0;
+    }
+}
+
         .symptoms,
         .options {
             display: block;
@@ -494,7 +523,7 @@
                 <span class="highlight-text">マッサージコース：オプション</span>
             </div>
             <div class="irradiations">
-                <div class="info-text">各マッサージコースに下記シェービングオプションの追加も可能です</div>
+                <div class="info-textop">各マッサージコースに下記シェービングオプションの追加も可能です</div>
                 <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット</button>
                 <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">襟足</button>
                 <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">背中(キャミソールライン)</button>
