@@ -847,7 +847,7 @@
             <div class="irradiations">
                 <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット</button>
                 <button type="button" id="secondirradiations" onclick="selectirradiations(this)" data-price="15000">ベーシックマッサージ(パック付き)</button>
-                <button type="button" id="thirdirradiations" onclick="selectirradiations(this)" data-price="15000">リラックスマッサージの(パック付き)</button>
+                <button type="button" id="thirdirradiations" onclick="selectirradiations(this)" data-price="15000">リラックスマッサージ(パック付き)</button>
             </div>
         </div>
 
@@ -866,6 +866,8 @@
                 <span class="highlight-text">オプション</span>
             </div>
             <div class="irradiations">
+                <button type="button" id="fourthirradiations" onclick="selectirradiations(this)" data-price="15000">美白パック</button>
+                <button type="button" id="fifthirradiations" onclick="selectirradiations(this)" data-price="15000">保湿パック</button>
                 <button type="button" id="fourthirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット</button>
                 <button type="button" id="fifthirradiations" onclick="selectirradiations(this)" data-price="15000">襟足</button>
                 <button type="button" id="seventhirradiations" onclick="selectirradiations(this)" data-price="15000">背中(キャミソールライン)</button>
@@ -984,6 +986,8 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
+            '美白パック': 15,
+            '保湿パック': 10,
             '眉カット': 10,
             'ベーシックマッサージ(パック付き)': 20,
             'リラックスマッサージの(パック付き)': 30,
